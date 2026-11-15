@@ -4,12 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Reminder</title>
-
 <style>
 * {
   box-sizing: border-box;
 }
-
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -17,7 +15,6 @@ body {
   color: #252b40;
   padding: 30px 15px;
 }
-
 .container {
   max-width: 600px;
   margin: auto;
@@ -26,58 +23,33 @@ body {
   border-radius: 18px;
   box-shadow: 0 8px 30px #17255412;
 }
-
 h1 {
   margin: 0 0 8px;
   color: #3548a5;
 }
-
 .subtitle {
   color: #777;
   margin-bottom: 25px;
 }
-
 .date {
   background: #edf0ff;
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   font-weight: bold;
 }
-
-/* iPhone audio status */
-.audio-status {
-  background: #fff4d6;
-  border: 1px solid #f1d277;
-  color: #6b5500;
-  padding: 13px;
-  border-radius: 10px;
-  margin-bottom: 22px;
-  text-align: center;
-  font-size: 13px;
-}
-
-.audio-status.ready {
-  background: #e8f8ed;
-  border-color: #9ed7ad;
-  color: #23733a;
-}
-
-input,
-textarea {
+input, textarea {
   width: 100%;
   padding: 13px;
   margin: 8px 0 16px;
   border: 1px solid #d8dbea;
   border-radius: 9px;
-  font-size: 16px;
+  font-size: 15px;
 }
-
 textarea {
   resize: vertical;
   min-height: 65px;
 }
-
 button {
   border: none;
   padding: 12px 18px;
@@ -86,334 +58,260 @@ button {
   font-size: 14px;
   font-weight: bold;
 }
-
 .add-btn {
   background: #4356c5;
   color: white;
   width: 100%;
 }
-
-.test-btn {
+.notify-btn {
   background: #edf0ff;
   color: #3548a5;
   width: 100%;
   margin-top: 12px;
 }
-
 button:hover {
   opacity: 0.85;
 }
-
 h2 {
   margin-top: 30px;
   font-size: 19px;
 }
-
 .reminder {
   background: #f7f8fc;
   border: 1px solid #e8eaf2;
   border-radius: 12px;
   padding: 16px;
   margin: 12px 0;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
 }
-
 .reminder h3 {
   margin: 0 0 6px;
   font-size: 16px;
 }
-
 .reminder p {
   margin: 4px 0;
   color: #777;
   font-size: 13px;
 }
-
 .reminder-time {
-  color: #4356c5 !important;
+  color: #4356c5;
   font-weight: bold;
 }
-
-.reminder-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.reminder-actions input {
-  width: auto;
-  margin: 0;
-}
-
 .delete-btn {
   background: #ffe9e9;
   color: #d33;
   padding: 9px 12px;
 }
-
 .empty {
   text-align: center;
   color: #999;
   padding: 25px 5px;
 }
-
 .status {
   text-align: center;
   color: #777;
   font-size: 12px;
   margin-top: 18px;
 }
-
 .toast {
   display: none;
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-
   background: #29365e;
   color: white;
-
   padding: 15px 22px;
   border-radius: 10px;
-
   width: max-content;
   max-width: 90%;
-
   box-shadow: 0 5px 20px #0002;
-
-  z-index: 9999;
 }
 </style>
 </head>
-
 <body>
-
 <div class="container">
-
   <h1>🔔 Daily Reminders</h1>
-
-  <p class="subtitle">
-    Stay organized. Never forget what matters.
-  </p>
-
+  <p class="subtitle">Stay organized. Never forget what matters.</p>
   <div class="date" id="today"></div>
-
-  <div class="audio-status" id="audioStatus">
-    🔊 Tap anywhere on this page once to enable iPhone alarm sound.
-  </div>
-
-
   <h2>Create a Reminder</h2>
-
   <form id="reminderForm">
-
-    <label for="title">
-      Reminder Title
-    </label>
-
+    <label>Reminder Title</label>
     <input
       type="text"
       id="title"
       placeholder="Example: Take a break"
       required
     >
-
-
-    <label for="description">
-      Description
-    </label>
-
+    <label>Description</label>
     <textarea
       id="description"
       placeholder="What do you need to remember?"
     ></textarea>
-
-
-    <label for="time">
-      Reminder Time
-    </label>
-
-    <input
-      type="time"
-      id="time"
-      required
-    >
-
-
-    <button
-      class="add-btn"
-      type="submit"
-    >
+    <label>Reminder Time</label>
+    <input type="time" id="time" required>
+    <button class="add-btn" type="submit">
       + Add Daily Reminder
     </button>
-
   </form>
-
-
   <button
-    class="test-btn"
-    id="testSoundBtn"
+    class="notify-btn"
+    id="notificationBtn"
     type="button"
   >
-    🔊 Test Alarm Sound
+    Enable Desktop Notifications
   </button>
-
-
   <h2>My Daily Reminders</h2>
-
   <div id="reminderList"></div>
-
-
   <p class="status">
-    Keep this page open for reminders to work.
+    Your reminders are saved automatically on this device.
   </p>
-
 </div>
-
-
-<div
-  class="toast"
-  id="toast"
-></div>
-
-
-
+<div class="toast" id="toast"></div>
 <script>
-
-/* =====================================
-   ELEMENTS
-===================================== */
-
-const form =
-  document.getElementById("reminderForm");
-
-const list =
-  document.getElementById("reminderList");
-
-const toast =
-  document.getElementById("toast");
-
-const audioStatus =
-  document.getElementById("audioStatus");
-
-const testSoundBtn =
-  document.getElementById("testSoundBtn");
-
-
-/* =====================================
-   LOAD REMINDERS
-===================================== */
-
-let reminders = [];
-
-try {
-
-  reminders = JSON.parse(
-    localStorage.getItem("dailyReminders") || "[]"
-  );
-
-  if (!Array.isArray(reminders)) {
-    reminders = [];
-  }
-
-}
-catch (error) {
-
-  reminders = [];
-
-}
-
-
+const form = document.getElementById("reminderForm");
+const list = document.getElementById("reminderList");
+const toast = document.getElementById("toast");
+let reminders = JSON.parse(
+  localStorage.getItem("dailyReminders") || "[]"
+);
 /* =====================================
    SAVE REMINDERS
 ===================================== */
-
 function saveReminders() {
-
   localStorage.setItem(
     "dailyReminders",
     JSON.stringify(reminders)
   );
-
 }
-
-
 /* =====================================
    TOAST MESSAGE
 ===================================== */
-
-let toastTimer = null;
-
 function showToast(message) {
-
   toast.textContent = message;
-
   toast.style.display = "block";
-
-  if (toastTimer) {
-    clearTimeout(toastTimer);
-  }
-
-  toastTimer = setTimeout(() => {
-
+  setTimeout(() => {
     toast.style.display = "none";
-
   }, 4000);
-
 }
-
-
 /* =====================================
    TODAY'S DATE
 ===================================== */
-
 function updateDate() {
-
   const now = new Date();
-
   document.getElementById("today").textContent =
-    now.toLocaleDateString(
-      "en-US",
-      {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
+    now.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+}
+/* =====================================
+   DISPLAY REMINDERS
+===================================== */
+function renderReminders() {
+  list.innerHTML = "";
+  if (reminders.length === 0) {
+    list.innerHTML =
+      '<div class="empty">No reminders yet. Add your first one!</div>';
+    return;
+  }
+  reminders.sort((a, b) =>
+    a.time.localeCompare(b.time)
+  );
+  reminders.forEach((reminder) => {
+    const item = document.createElement("div");
+    item.className = "reminder";
+    /* REMINDER INFORMATION */
+    const info = document.createElement("div");
+    const heading = document.createElement("h3");
+    heading.textContent = reminder.title;
+    const description = document.createElement("p");
+    description.textContent =
+      reminder.description || "Daily reminder";
+    const time = document.createElement("p");
+    time.className = "reminder-time";
+    time.textContent =
+      formatTime(reminder.time);
+    const status = document.createElement("p");
+    status.textContent =
+      reminder.enabled
+        ? "● Active"
+        : "○ Paused";
+    info.append(
+      heading,
+      description,
+      time,
+      status
+    );
+    /* BUTTON AREA */
+    const actions = document.createElement("div");
+    /* ENABLE / DISABLE */
+    const toggle =
+      document.createElement("input");
+    toggle.type = "checkbox";
+    toggle.checked =
+      reminder.enabled;
+    toggle.title =
+      "Enable or pause reminder";
+    toggle.addEventListener(
+      "change",
+      () => {
+        reminder.enabled =
+          toggle.checked;
+        saveReminders();
+        renderReminders();
       }
     );
-
+    /* DELETE */
+    const remove =
+      document.createElement("button");
+    remove.textContent =
+      "Delete";
+    remove.className =
+      "delete-btn";
+    remove.type = "button";
+    remove.addEventListener(
+      "click",
+      () => {
+        reminders =
+          reminders.filter(
+            r =>
+              r.id !== reminder.id
+          );
+        saveReminders();
+        renderReminders();
+        showToast(
+          "Reminder deleted."
+        );
+      }
+    );
+    actions.append(
+      toggle,
+      remove
+    );
+    item.append(
+      info,
+      actions
+    );
+    list.appendChild(item);
+  });
 }
-
-
 /* =====================================
    FORMAT TIME
 ===================================== */
-
 function formatTime(time) {
-
-  const parts = time.split(":");
-
-  const hours =
-    Number(parts[0]);
-
-  const minutes =
-    Number(parts[1]);
-
-  const date =
-    new Date();
-
+  const [hours, minutes] =
+    time.split(":");
+  const date = new Date();
   date.setHours(
-    hours,
-    minutes,
-    0,
-    0
+    Number(hours),
+    Number(minutes)
   );
-
   return date.toLocaleTimeString(
     [],
     {
@@ -421,40 +319,251 @@ function formatTime(time) {
       minute: "2-digit"
     }
   );
-
 }
-
-
 /* =====================================
-   DISPLAY REMINDERS
+   ADD NEW REMINDER
 ===================================== */
-
-function renderReminders() {
-
-  list.innerHTML = "";
-
-  if (reminders.length === 0) {
-
-    const empty =
-      document.createElement("div");
-
-    empty.className =
-      "empty";
-
-    empty.textContent =
-      "No reminders yet. Add your first one!";
-
-    list.appendChild(empty);
-
-    return;
-
+form.addEventListener(
+  "submit",
+  (event) => {
+    event.preventDefault();
+    const reminder = {
+      id:
+        Date.now().toString(),
+      title:
+        document
+          .getElementById("title")
+          .value
+          .trim(),
+      description:
+        document
+          .getElementById("description")
+          .value
+          .trim(),
+      time:
+        document
+          .getElementById("time")
+          .value,
+      enabled: true,
+      lastFired: ""
+    };
+    reminders.push(reminder);
+    saveReminders();
+    renderReminders();
+    form.reset();
+    showToast(
+      "Daily reminder added!"
+    );
   }
-
-
-  reminders.sort(
-    (a, b) =>
-      a.time.localeCompare(b.time)
+);
+/* =====================================
+   DESKTOP NOTIFICATIONS
+===================================== */
+document
+  .getElementById("notificationBtn")
+  .addEventListener(
+    "click",
+    async () => {
+      if (
+        !("Notification" in window)
+      ) {
+        showToast(
+          "Notifications are not supported by this browser."
+        );
+        return;
+      }
+      const permission =
+        await Notification
+          .requestPermission();
+      if (
+        permission === "granted"
+      ) {
+        showToast(
+          "Desktop notifications enabled!"
+        );
+      }
+      else {
+        showToast(
+          "Please allow notifications in your browser settings."
+        );
+      }
+    }
   );
-
-
-  
+/* =====================================
+   REMINDER ALARM SOUND
+===================================== */
+function playReminderSound() {
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      window.webkitAudioContext;
+    if (!AudioContextClass) {
+      return;
+    }
+    const audio =
+      new AudioContextClass();
+    function beep(
+      delay,
+      frequency
+    ) {
+      const oscillator =
+        audio.createOscillator();
+      const gain =
+        audio.createGain();
+      oscillator.connect(gain);
+      gain.connect(
+        audio.destination
+      );
+      oscillator.frequency.value =
+        frequency;
+      oscillator.type =
+        "sine";
+      gain.gain.setValueAtTime(
+        0.3,
+        audio.currentTime + delay
+      );
+      gain.gain
+        .exponentialRampToValueAtTime(
+          0.01,
+          audio.currentTime +
+            delay +
+            0.35
+        );
+      oscillator.start(
+        audio.currentTime +
+          delay
+      );
+      oscillator.stop(
+        audio.currentTime +
+          delay +
+          0.35
+      );
+    }
+    /*
+      THREE-BEEP ALARM
+    */
+    beep(0, 880);
+    beep(0.45, 880);
+    beep(0.90, 1100);
+  }
+  catch (error) {
+    console.log(
+      "Unable to play reminder sound.",
+      error
+    );
+  }
+}
+/* =====================================
+   CHECK REMINDERS
+===================================== */
+function checkReminders() {
+  const now =
+    new Date();
+  const currentTime =
+    String(
+      now.getHours()
+    ).padStart(2, "0")
+    + ":"
+    + String(
+      now.getMinutes()
+    ).padStart(2, "0");
+  const today = [
+    now.getFullYear(),
+    String(
+      now.getMonth() + 1
+    ).padStart(2, "0"),
+    String(
+      now.getDate()
+    ).padStart(2, "0")
+  ].join("-");
+  reminders.forEach(
+    reminder => {
+      if (
+        reminder.enabled
+        &&
+        currentTime >=
+          reminder.time
+        &&
+        reminder.lastFired
+          !== today
+      ) {
+        /*
+          MARK AS FIRED FIRST
+          This prevents the reminder
+          from firing again every
+          15 seconds.
+        */
+        reminder.lastFired =
+          today;
+        saveReminders();
+        /*
+          PLAY ALARM SOUND
+        */
+        playReminderSound();
+        /*
+          DESKTOP NOTIFICATION
+        */
+        if (
+          "Notification" in window
+          &&
+          Notification.permission
+            === "granted"
+        ) {
+          new Notification(
+            "🔔 " +
+            reminder.title,
+            {
+              body:
+                reminder.description
+                ||
+                "Your daily reminder!",
+              tag:
+                reminder.id
+            }
+          );
+        }
+        /*
+          SHOW MESSAGE INSIDE APP
+        */
+        showToast(
+          "🔔 Reminder: " +
+          reminder.title
+        );
+        /*
+          POPUP ALERT
+        */
+        alert(
+          "🔔 REMINDER\n\n"
+          +
+          reminder.title
+          +
+          (
+            reminder.description
+            ?
+            "\n\n" +
+            reminder.description
+            :
+            ""
+          )
+        );
+      }
+    }
+  );
+}
+/* =====================================
+   START APP
+===================================== */
+updateDate();
+renderReminders();
+checkReminders();
+/*
+  CHECK FOR REMINDERS
+  EVERY 15 SECONDS
+*/
+setInterval(
+  checkReminders,
+  15000
+);
+</script>
+</body>
+</html>
